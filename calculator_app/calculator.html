@@ -1,79 +1,45 @@
 <html>
   <head>
     <title>Calculator</title>
-    <style>
-      .button {
-        width: 80px;
-        height: 40px;
-        background-color: #6969b3;
-        border: 0px;
-        color: #ffffffca;
-        border-radius: 6px;
-        box-shadow: 3px 5px 5px black;
-      }
-
-      button:hover {
-        background-color: #98c1d9;
-      }
-
-      button:active {
-        box-shadow: 2px 4px 4px black;
-      }
-
-      .flexContainer {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: space-evenly;
-        align-items: baseline;
-        width: 390px;
-        row-gap: 8px;
-      }
-
-      .displayContainer {
-        display: flex;
-        justify-content: flex-end;
-        width: 390px;
-      }
-
-      #display {
-        margin-right: 20px;
-      }
-    </style>
+    <link rel="stylesheet" href="calculator.css">
   </head>
 
   <body>
-    <h1>Calculator</h1>
-    <div class="displayContainer">
-      <span id="display"></span>
-    </div>
+    <script src="calculator.js"></script>
+    <h1>Thomas Calculator</h1>
+    <div class="container">
+      <div class="displayContainer">
+        <span id="display"></span>
+      </div>
 
-    <div class="flexContainer">
-      <button class="button number">7</button>
-      <button class="button number">8</button>
-      <button class="button number">9</button>
-      <button class="button operator">/</button>
+      <div class="flexContainer">
+        <button class="button number">7</button>
+        <button class="button number">8</button>
+        <button class="button number">9</button>
+        <button class="button operator">/</button>
 
-      <button class="button number">4</button>
-      <button class="button number">5</button>
-      <button class="button number">6</button>
-      <button class="button operator">*</button>
+        <button class="button number">4</button>
+        <button class="button number">5</button>
+        <button class="button number">6</button>
+        <button class="button operator">*</button>
 
-      <button class="button number">1</button>
-      <button class="button number">2</button>
-      <button class="button number">3</button>
-      <button class="button operator">-</button>
+        <button class="button number">1</button>
+        <button class="button number">2</button>
+        <button class="button number">3</button>
+        <button class="button operator">-</button>
 
-      <button class="button number">0</button>
-      <button class="button decimal">.</button>
-      <button class="button equals">=</button>
-      <button class="button operator">+</button>
+        <button class="button number">0</button>
+        <button class="button decimal">.</button>
+        <button class="button equals">=</button>
+        <button class="button operator">+</button>
 
-      <button class="button parenthesis">(</button>
-      <button class="button parenthesis">)</button>
-    </div>
-
+        <button class="button parenthesis">(</button>
+        <button class="button parenthesis">)</button>
+        <button class="button clear">C</button>
+      </div>
+  </div>
     <script>
+      
       const numbersArr = Array.from(document.getElementsByClassName("number"));
       const operatorsArr = Array.from(document.getElementsByClassName("operator"));
       const parenthesisArr = Array.from(document.getElementsByClassName("parenthesis"));
@@ -97,8 +63,10 @@
 
         appendStringOperator: (newChar) => {
           if (numberStrs.includes(data.displayString.slice(-1)) || data.displayString.slice(-1) === ")") {
+
             data.displayString += newChar;
           }
+          console.log(data.displayString);
           data.updateDisplay();
         },
 
@@ -149,6 +117,53 @@
           data.appendStringParenthesis(elem.innerText);
         });
       });
-    </script>
+      //when equals is pressed
+      document.querySelector(".clear").addEventListener("click", function() {
+            
+      data.displayString = "0";
+      display.innerText = "0";
+      });
+      document.querySelector(".equals").addEventListener("click", function() {
+        // try{
+        //  const Array = data.displayString.split('');
+        // //  (\d+) is a shorthand for a digit (0-9), + means one or more, 
+        // //  \(  matches the (
+        // //  /g is the global flag
+
+        // //  $1 replace method, 
+        // //  * ( is the literal string we want to insert as the replacement.
+        //  if(data.displayString.includes('(') || data.displayString.includes(')') ){
+        //   let regex = /(\d+)\(/g;
+        //   let replacement = "$1 * (";
+        //   data.displayString = data.displayString.replace(regex, replacement);
+        //  }
+        //   data.displayString = eval(data.displayString);
+
+        //  console.log(data.displayString);
+        //  data.updateDisplay();
+        // }catch (error){ 
+        //   console.log("An error has occured: " + error);
+        //   if(error instanceof SyntaxError){
+        //     alert("invalid input");
+        //   }
+        //   data.displayString = "";
+        //   display.innerText = "0";
+        // }  
+      let tree = new ExpressionTree();
+      let postfix = tree.infixToPostfix(data.displayString);
+      console.log("Postfix Expression: ", postfix);  
+
+      let rootNode = tree.buildExpressionTree(postfix);
+
+      let result = tree.evaluateTree(rootNode);
+        
+      console.log("Result of Expression: ", result); 
+    //Update the display
+    
+    data.displayString = result.toString();
+    display.innerText = result.toString();
+});
+    
+    </script> 
   </body>
 </html>
